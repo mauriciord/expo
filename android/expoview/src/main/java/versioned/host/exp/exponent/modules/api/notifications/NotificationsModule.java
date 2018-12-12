@@ -79,8 +79,15 @@ public class NotificationsModule extends ReactContextBaseJavaModule {
     promise.resolve(null);
   }
 
+  @ReactMethod
+  public void deleteCategoryAsync(final String categoryIdParam, final Promise promise) {
+    String categoryId = getScopedIdIfNotDetached(categoryIdParam);
+    NotificationActionCenter.remove(categoryId);
+    promise.resolve(null);
+  }
+
   private String getScopedIdIfNotDetached(String categoryId) {
-    if (!Constants.isDetached()) {
+    if (!Constants.isStandaloneApp()) {
       try {
         String experienceId = mManifest.getString(ExponentManifest.MANIFEST_ID_KEY);
         return experienceId + ":" + categoryId;
@@ -342,7 +349,7 @@ public class NotificationsModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void cancelScheduledNotification(final int notificationId, final Promise promise) {
+  public void cancelScheduledNotificationAsync(final int notificationId, final Promise promise) {
     try {
       ExponentNotificationManager manager = new ExponentNotificationManager(getReactApplicationContext());
       manager.cancelScheduled(mManifest.getString(ExponentManifest.MANIFEST_ID_KEY), notificationId);
@@ -353,7 +360,7 @@ public class NotificationsModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void cancelAllScheduledNotifications(final Promise promise) {
+  public void cancelAllScheduledNotificationsAsync(final Promise promise) {
     try {
       ExponentNotificationManager manager = new ExponentNotificationManager(getReactApplicationContext());
       manager.cancelAllScheduled(mManifest.getString(ExponentManifest.MANIFEST_ID_KEY));
